@@ -19,7 +19,7 @@ class BaseFeishu(object):
         if kwargs and authorization and isinstance(kwargs, dict) and kwargs.get(authorization_key):
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer {0}'.format(kwargs.get(authorization_key))
+                'Authorization': 'Bearer {0}'.format(kwargs.get(authorization_key)),
             }
             res = requests.get(url.format(**kwargs), headers=headers, verify=verify)
         else:
@@ -45,9 +45,13 @@ class BaseFeishu(object):
                 if authorization and isinstance(data, dict) and data.get(authorization_key):
                     kwargs['headers'] = {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer {0}'.format(data.get(authorization_key))
+                        'Authorization': 'Bearer {0}'.format(data.get(authorization_key)),
                     }
                 if data_to_json_str and isinstance(data, dict):
+                    if not kwargs.get('headers'):
+                        kwargs['headers'] = {
+                            'Content-Type': 'application/json',
+                        }
                     kwargs['data'] = json.dumps(data, ensure_ascii=False).encode('utf-8')
                 if data_to_xml_str and isinstance(data, dict):
                     kwargs['data'] = dict_to_xml(data)
