@@ -9,6 +9,7 @@ from pywe_xml import dict_to_xml
 class BaseFeishu(object):
     def __init__(self):
         self.OPEN_DOMAIN = 'https://open.feishu.cn'
+        self.PASSPORT_DOMAIN = 'https://passport.feishu.cn'
 
     def geturl(self, url, **kwargs):
         return url.format(**kwargs)
@@ -18,7 +19,7 @@ class BaseFeishu(object):
         # SSLError: [Errno 1] _ssl.c:510: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
         if kwargs and authorization and isinstance(kwargs, dict) and kwargs.get(authorization_key):
             headers = {
-                'Content-Type': 'application/json',
+                'Content-Type': kwargs.get('content_type') or 'application/json',
                 'Authorization': 'Bearer {0}'.format(kwargs.get(authorization_key)),
             }
             res = requests.get(url.format(**kwargs), headers=headers, verify=verify)
@@ -44,13 +45,13 @@ class BaseFeishu(object):
             if data:
                 if authorization and isinstance(data, dict) and data.get(authorization_key):
                     kwargs['headers'] = {
-                        'Content-Type': 'application/json',
+                        'Content-Type': kwargs.get('content_type') or 'application/json',
                         'Authorization': 'Bearer {0}'.format(data.get(authorization_key)),
                     }
                 if data_to_json_str and isinstance(data, dict):
                     if not kwargs.get('headers'):
                         kwargs['headers'] = {
-                            'Content-Type': 'application/json',
+                            'Content-Type': kwargs.get('content_type') or 'application/json',
                         }
                     kwargs['data'] = json.dumps(data, ensure_ascii=False).encode('utf-8')
                 if data_to_xml_str and isinstance(data, dict):
